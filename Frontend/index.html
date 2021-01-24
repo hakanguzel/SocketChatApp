@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp</title>
+    <script>
+        var name = prompt("Lütfen adınızı giriniz");
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Sohbet Odası</h1>
+    </div>
+    <ul id="messages"></ul>
+    <form action="">
+        <input id="m" placeholder="Mesajınızı girin..." autocomplete="off" required /><button>Gönder</button>
+    </form>
+    <script src="http://localhost:999/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    
+    
+    <script>
+        const socket = io.connect('http://localhost:999/', {
+            reconnectionAttempts: 4,
+            reconnectionDelay: 3000,
+            reconnection: false
+        });
+        socket.emit('katılma mesajı', name);
+        $('form').submit(function (e) {
+            e.preventDefault();
+            socket.emit('sohbet mesajı', (name + ':  ' + $('#m').val()));
+            $('#messages').append($('<li id="list">').text('Siz:  ' + $('#m').val()));
+            $('#m').val('');
+        });
+        socket.on('sohbet mesajı', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+    </script>
+
+
+
+</body>
+</html>
